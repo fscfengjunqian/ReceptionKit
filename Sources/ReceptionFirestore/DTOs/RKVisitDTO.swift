@@ -10,9 +10,9 @@ import FirebaseFirestore
 import ReceptionCore
 
 // MARK: - Visit DTO
-struct VisitDTO: Codable {
+struct RKVisitDTO: Codable {
     @DocumentID var id: String?
-    var type: VisitType // 假设 VisitType 也是 String, Codable
+    var type: RKVisitType // 假设 VisitType 也是 String, Codable
     var visitorId: String
     var employeeId: String
     @ServerTimestamp var createdAt: Date?
@@ -20,6 +20,6 @@ struct VisitDTO: Codable {
     var scheduledAt: Date?
     var reservationCode: String?
     var peopleCount: Int?
-    var status: VisitStatus
+    var status: RKVisitStatus
 }
 

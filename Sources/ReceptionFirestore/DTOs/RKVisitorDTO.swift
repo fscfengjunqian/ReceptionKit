@@ -10,7 +10,7 @@ import Foundation
 import ReceptionCore
 
 // MARK: - Visitor DTO
-struct VisitorDTO: Codable {
+struct RKVisitorDTO: Codable {
     @DocumentID var id: String?
     var name: String
     var company: String?

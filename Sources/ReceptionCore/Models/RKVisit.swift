@@ -7,9 +7,9 @@
 
 import Foundation
 
-public struct Visit: Identifiable, Codable, Equatable {
+public struct RKVisit: Identifiable, Codable, Equatable {
     public let id: String
-    public var type: VisitType
+    public var type: RKVisitType
     public var visitorId: String
     public var employeeId: String
 
@@ -20,11 +20,11 @@ public struct Visit: Identifiable, Codable, Equatable {
     public var reservationCode: String?
 
     public var peopleCount: Int?
-    public var status: VisitStatus
+    public var status: RKVisitStatus
 
     public init(
         id: String = UUID().uuidString,
-        type: VisitType = .unscheduled,
+        type: RKVisitType = .unscheduled,
         visitorId: String,
         employeeId: String,
         createdAt: Date = .now,
@@ -32,7 +32,7 @@ public struct Visit: Identifiable, Codable, Equatable {
         scheduledAt: Date? = nil,
         reservationCode: String? = nil,
         peopleCount: Int? = nil,
-        status: VisitStatus = .waitingArrival
+        status: RKVisitStatus = .waitingArrival
     ) {
         self.id = id
         self.type = type

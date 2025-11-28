@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum VisitStatus: String, Codable, Equatable {
+public enum RKVisitStatus: String, Codable, Equatable {
     case scheduled
     case waitingArrival
     case arrived

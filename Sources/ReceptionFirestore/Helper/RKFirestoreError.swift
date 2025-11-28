@@ -7,10 +7,8 @@
 
 import Foundation
 
-public enum MockError: Error {
+// MARK: - Helper Errors
+public enum RKFirestoreError: Error {
     case notFound
-    case fetchFailed
-    case saveFailed
-    case deleteFailed
-    case queryFailed
+    case unknown
 }

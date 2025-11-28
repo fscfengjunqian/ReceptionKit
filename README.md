@@ -50,16 +50,17 @@
 import ReceptionCore
 
 // 核心模型是公共的
-let newEmployee = Employee(email: "user@example.com", name: "John Doe")
+let newEmployee = RKEmployee(email: "user@example.com", name: "John Doe")
 
 // 在业务逻辑中只依赖 Protocol
 struct EmployeeUseCase {
-    let repository: EmployeeRepositoryProtocol
+    let repository: RKEmployeeRepositoryProtocol
     
-    func save(employee: Employee) async throws {
+    func save(employee: RKEmployee) async throws {
         try await repository.save(employee)
     }
 }
+```
 
 ### 2. 使用 Firestore 实现 (ReceptionFirestore)
 在您的数据层（例如 Service 或 DataManager）实例化具体的 Firestore 实现：
@@ -69,13 +70,13 @@ import ReceptionFirestore
 import ReceptionCore
 
 // 实例化 Firestore 实现
-let employeeRepo = FirestoreEmployeeRepository()
+let employeeRepo = RKFirestoreEmployeeRepository()
 
 // 使用 async/await
 Task {
     do {
         // 创建或更新数据
-        let employee = Employee(email: "test@example.com", name: "Alice")
+        let employee = RKEmployee(email: "test@example.com", name: "Alice")
         try await employeeRepo.save(employee)
         
         // 读取数据
@@ -85,6 +86,7 @@ Task {
         print("Firestore operation failed: \(error)")
     }
 }
+```
 
 ### 3. 单元测试 (ReceptionMocks)
 在您的单元测试 Target 中，利用 ReceptionMocks 进行依赖注入，以隔离业务逻辑：
@@ -98,8 +100,8 @@ final class MyViewModelTests: XCTestCase {
     
     func testEmployeeLoading() async throws {
         // 1. 准备 Mock 数据并设置 Mock Repo
-        let mockData = Employee(email: "a@b.com", name: "Test User")
-        let mockRepo = MockEmployeeRepository(initialData: [mockData])
+        let mockData = RKEmployee(email: "a@b.com", name: "Test User")
+        let mockRepo = RKMockEmployeeRepository(initialData: [mockData])
         
         // 2. 注入 Mock Repo
         let useCase = EmployeeUseCase(repository: mockRepo) 
@@ -113,6 +115,7 @@ final class MyViewModelTests: XCTestCase {
         XCTAssertEqual(mockRepo.callCount_fetch, 1)
     }
 }
+```
 
 ---
 

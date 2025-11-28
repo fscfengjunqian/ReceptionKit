@@ -8,51 +8,51 @@
 import Foundation
 import ReceptionCore
 
-public class MockVisitorRepository: VisitorRepositoryProtocol {
+public class RKMockVisitorRepository: RKVisitorRepositoryProtocol {
     
     // 模拟数据库存储
-    public var visitors: [String: Visitor] = [:]
+    public var visitors: [String: RKVisitor] = [:]
     public var shouldThrowError = false
     
-    public init(initialData: [Visitor] = []) {
+    public init(initialData: [RKVisitor] = []) {
         initialData.forEach { visitors[$0.id] = $0 }
     }
     
-    public func fetch(id: String) async throws -> Visitor {
+    public func fetch(id: String) async throws -> RKVisitor {
         if shouldThrowError {
-            throw MockError.fetchFailed
+            throw RKMockError.fetchFailed
         }
         guard let visitor = visitors[id] else {
-            throw MockError.notFound
+            throw RKMockError.notFound
         }
         return visitor
     }
     
-    public func fetch(byEmail email: String) async throws -> Visitor? {
+    public func fetch(byEmail email: String) async throws -> RKVisitor? {
         if shouldThrowError {
-            throw MockError.fetchFailed
+            throw RKMockError.fetchFailed
         }
         return visitors.values.first(where: { $0.email == email })
     }
     
-    public func search(name: String) async throws -> [Visitor] {
+    public func search(name: String) async throws -> [RKVisitor] {
         if shouldThrowError {
-            throw MockError.queryFailed
+            throw RKMockError.queryFailed
         }
         // 简单的包含查询
         return visitors.values.filter { $0.name.localizedCaseInsensitiveContains(name) }
     }
     
-    public func save(_ visitor: Visitor) async throws {
+    public func save(_ visitor: RKVisitor) async throws {
         if shouldThrowError {
-            throw MockError.saveFailed
+            throw RKMockError.saveFailed
         }
         visitors[visitor.id] = visitor
     }
     
     public func delete(id: String) async throws {
         if shouldThrowError {
-            throw MockError.deleteFailed
+            throw RKMockError.deleteFailed
         }
         visitors.removeValue(forKey: id)
     }

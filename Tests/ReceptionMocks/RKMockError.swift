@@ -7,8 +7,10 @@
 
 import Foundation
 
-// MARK: - Helper Errors
-public enum FirestoreError: Error {
+public enum RKMockError: Error {
     case notFound
-    case unknown
+    case fetchFailed
+    case saveFailed
+    case deleteFailed
+    case queryFailed
 }

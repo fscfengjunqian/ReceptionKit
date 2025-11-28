@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum VisitType: String, Codable, Equatable {
+public enum RKVisitType: String, Codable, Equatable {
     case scheduled  // 预约访问
     case unscheduled  // 非预约访问（现场 walk-in）
     case delivery  // 快递

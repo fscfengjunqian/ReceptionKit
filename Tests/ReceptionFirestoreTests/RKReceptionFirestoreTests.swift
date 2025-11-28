@@ -14,11 +14,11 @@ import Foundation
 // 假设这些是您的 Firestore DTO 和 Domain Model
 // 注意：实际项目中，DTO应该在 Firestore 模块中定义，但为了测试，需要能访问到它们。
 
-final class ReceptionFirestoreTests: XCTestCase {
+final class RKReceptionFirestoreTests: XCTestCase {
 
     // 辅助方法：创建一个 Domain Model 实例
-    private func createTestEmployee() -> Employee {
-        return Employee(
+    private func createTestEmployee() -> RKEmployee {
+        return RKEmployee(
             id: UUID().uuidString,
             email: "alice.test@company.com",
             name: "Alice Smith",
@@ -52,7 +52,7 @@ final class ReceptionFirestoreTests: XCTestCase {
     /// 测试 DTO 到 Domain Model 的转换是否正确，特别是 Date 和 Optional 字段
     func testEmployeeToDomainMapping() throws {
         // 模拟一个从 Firestore 读取的 DTO (包含 nil ServerTimestamp)
-        let mockDTO = EmployeeDTO(
+        let mockDTO = RKEmployeeDTO(
             id: UUID().uuidString,
             email: "bob@company.com",
             name: "Bob",
@@ -82,7 +82,7 @@ final class ReceptionFirestoreTests: XCTestCase {
     /// 测试 Visit Model 的转换
     func testVisitToDTOMapping() throws {
         // 假设 VisitType.scheduled 存在
-        let visit = Visit(
+        let visit = RKVisit(
             visitorId: "v1",
             employeeId: "e1",
             scheduledAt: Date().addingTimeInterval(3600),
@@ -103,7 +103,7 @@ final class ReceptionFirestoreTests: XCTestCase {
 
     /// 测试 Visitor Model 的转换和可选字段
     func testVisitorToDomainMapping() throws {
-        let mockDTO = VisitorDTO(
+        let mockDTO = RKVisitorDTO(
             id: "vid_123",
             name: "Test Visitor",
             company: "Test Corp",

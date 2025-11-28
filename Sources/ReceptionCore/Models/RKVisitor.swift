@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Visitor: Identifiable, Codable, Equatable {
+public struct RKVisitor: Identifiable, Codable, Equatable {
     public var id: String
     public var name: String
     public var company: String?

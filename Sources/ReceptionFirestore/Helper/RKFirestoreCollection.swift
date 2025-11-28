@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum FirestoreCollection {
+enum RKFirestoreCollection {
     static let employees = "employee"
     static let visits = "visit"
     static let visitors = "visitor"

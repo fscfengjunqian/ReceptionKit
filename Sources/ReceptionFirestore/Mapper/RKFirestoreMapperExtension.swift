@@ -10,9 +10,9 @@ import FirebaseFirestore
 import ReceptionCore
 
 // MARK: - Employee Conversion
-extension EmployeeDTO {
-    func toDomain() -> Employee {
-        return Employee(
+extension RKEmployeeDTO {
+    func toDomain() -> RKEmployee {
+        return RKEmployee(
             id: self.id ?? "",
             email: self.email,
             name: self.name,
@@ -28,9 +28,9 @@ extension EmployeeDTO {
     }
 }
 
-extension Employee {
-    func toDTO() -> EmployeeDTO {
-        return EmployeeDTO(
+extension RKEmployee {
+    func toDTO() -> RKEmployeeDTO {
+        return RKEmployeeDTO(
             id: self.id, // 如果是新建，这里ID会被忽略，Firestore生成新ID；如果是更新，则用于指定文档
             email: self.email,
             name: self.name,
@@ -47,9 +47,9 @@ extension Employee {
 }
 
 // MARK: - Visit Conversion
-extension VisitDTO {
-    func toDomain() -> Visit {
-        return Visit(
+extension RKVisitDTO {
+    func toDomain() -> RKVisit {
+        return RKVisit(
             id: self.id ?? "",
             type: self.type,
             visitorId: self.visitorId,
@@ -64,9 +64,9 @@ extension VisitDTO {
     }
 }
 
-extension Visit {
-    func toDTO() -> VisitDTO {
-        return VisitDTO(
+extension RKVisit {
+    func toDTO() -> RKVisitDTO {
+        return RKVisitDTO(
             id: self.id,
             type: self.type,
             visitorId: self.visitorId,
@@ -82,9 +82,9 @@ extension Visit {
 }
 
 // MARK: - Visitor Conversion
-extension VisitorDTO {
-    func toDomain() -> Visitor {
-        return Visitor(
+extension RKVisitorDTO {
+    func toDomain() -> RKVisitor {
+        return RKVisitor(
             id: self.id ?? "",
             name: self.name,
             company: self.company,
@@ -96,9 +96,9 @@ extension VisitorDTO {
     }
 }
 
-extension Visitor {
-    func toDTO() -> VisitorDTO {
-        return VisitorDTO(
+extension RKVisitor {
+    func toDTO() -> RKVisitorDTO {
+        return RKVisitorDTO(
             id: self.id,
             name: self.name,
             company: self.company,
