@@ -37,6 +37,8 @@ public class RKMockEmployeeRepository: RKEmployeeRepositoryProtocol {
         if shouldThrowError {
             throw RKMockError.fetchFailed
         }
+        // Simulate network latency
+        try await Task.sleep(nanoseconds: 500_000_000)
         return Array(employees.values)
     }
     
@@ -54,6 +56,8 @@ public class RKMockEmployeeRepository: RKEmployeeRepositoryProtocol {
         }
         // 模拟更新或插入 (Upsert)
         employees[employee.id] = employee
+        
+        try await Task.sleep(nanoseconds: 100_000_000)
     }
     
     public func delete(id: String) async throws {
