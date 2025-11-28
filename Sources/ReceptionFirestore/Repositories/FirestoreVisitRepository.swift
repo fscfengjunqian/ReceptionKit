@@ -9,78 +9,59 @@ import FirebaseFirestore
 import Foundation
 import ReceptionCore
 
-public final class FirestoreVisitRepository: VisitRepository {
+// MARK: - Firestore Visit Repository
+public class FirestoreVisitRepository: VisitRepositoryProtocol {
+    
     private let db = Firestore.firestore()
-    private var collection: CollectionReference { db.collection("visits") }
-
+    
     public init() {}
-
-    public func createVisit(_ visit: Visit) async throws -> Visit {
-        let dto = FirestoreMapper.visitToDTO(visit)
-        let ref = collection.document(visit.id)
-        try ref.setData(from: dto)
-        let snap = try await ref.getDocument()
-        guard let savedDTO = try? snap.data(as: VisitDTO.self) else {
-            throw NSError(
-                domain: "FirestoreVisitRepository",
-                code: -1,
-                userInfo: [
-                    NSLocalizedDescriptionKey: "Failed to read saved visit"
-                ]
-            )
+    
+    public func fetch(id: String) async throws -> Visit {
+        let document = try await db.collection(FirestoreCollection.visits).document(id).getDocument()
+        guard let dto = try? document.data(as: VisitDTO.self) else {
+            throw FirestoreError.notFound
         }
-        return FirestoreMapper.visitToDomain(savedDTO)
+        return dto.toDomain()
     }
-
-    public func fetchVisit(byId id: String) async throws -> Visit? {
-        let snap = try await collection.document(id).getDocument()
-        guard snap.exists, let dto = try? snap.data(as: VisitDTO.self) else {
-            return nil
-        }
-        return FirestoreMapper.visitToDomain(dto)
-    }
-
-    public func fetchVisits(forEmployeeId employeeId: String) async throws
-        -> [Visit]
-    {
-        let snapshots =
-            try await collection
-            .whereField("employeeId", isEqualTo: employeeId)
-            .order(by: "createdAt", descending: false)
+    
+    public func fetchByEmployee(id: String) async throws -> [Visit] {
+        // 注意：如果你需要按时间排序，可能需要在 Firebase Console 创建复合索引
+        let snapshot = try await db.collection(FirestoreCollection.visits)
+            .whereField("employeeId", isEqualTo: id)
+            .order(by: "createdAt", descending: true)
             .getDocuments()
-        return snapshots.documents.compactMap {
-            try? $0.data(as: VisitDTO.self)
-        }.map { FirestoreMapper.visitToDomain($0) }
+        
+        return snapshot.documents.compactMap { try? $0.data(as: VisitDTO.self).toDomain() }
     }
-
-    public func fetchVisit(byReservationCode code: String) async throws
-        -> Visit?
-    {
-        let snapshot =
-            try await collection
-            .whereField("reservationCode", isEqualTo: code)
-            .limit(to: 1)
+    
+    public func fetchByVisitor(id: String) async throws -> [Visit] {
+        let snapshot = try await db.collection(FirestoreCollection.visits)
+            .whereField("visitorId", isEqualTo: id)
+            .order(by: "createdAt", descending: true)
             .getDocuments()
-        guard let doc = snapshot.documents.first,
-            let dto = try? doc.data(as: VisitDTO.self)
-        else { return nil }
-        return FirestoreMapper.visitToDomain(dto)
+        
+        return snapshot.documents.compactMap { try? $0.data(as: VisitDTO.self).toDomain() }
     }
-
-    public func updateVisit(_ visit: Visit) async throws {
-        let dto = FirestoreMapper.visitToDTO(visit)
-        try collection.document(visit.id).setData(from: dto, merge: true)
+    
+    public func fetchUpcoming(forEmployeeId empId: String) async throws -> [Visit] {
+        // 查询未来的预约：状态是 scheduled 且时间在现在之后
+        let snapshot = try await db.collection(FirestoreCollection.visits)
+            .whereField("employeeId", isEqualTo: empId)
+            .whereField("status", isEqualTo: VisitStatus.scheduled.rawValue) // Enum 需转 rawValue
+            .whereField("scheduledAt", isGreaterThan: Date())
+            .order(by: "scheduledAt", descending: false) // 最近的在前
+            .getDocuments()
+        
+        return snapshot.documents.compactMap { try? $0.data(as: VisitDTO.self).toDomain() }
     }
-
-    public func updateVisitStatus(id: String, status: VisitStatus) async throws
-    {
-        try await collection.document(id).updateData([
-            "status": status.rawValue,
-            "updatedAt": FieldValue.serverTimestamp(),
-        ])
+    
+    public func save(_ visit: Visit) async throws {
+        var dto = visit.toDTO()
+        dto.updatedAt = nil
+        try db.collection(FirestoreCollection.visits).document(visit.id).setData(from: dto)
     }
-
-    public func deleteVisit(byId id: String) async throws {
-        try await collection.document(id).delete()
+    
+    public func delete(id: String) async throws {
+        try await db.collection(FirestoreCollection.visits).document(id).delete()
     }
 }

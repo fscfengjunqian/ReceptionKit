@@ -9,55 +9,43 @@ import FirebaseFirestore
 import Foundation
 import ReceptionCore
 
-public final class FirestoreEmployeeRepository: EmployeeRepository {
+// MARK: - Firestore Employee Repository
+public class FirestoreEmployeeRepository: EmployeeRepositoryProtocol {
+    
     private let db = Firestore.firestore()
-    private var collection: CollectionReference { db.collection("employees") }
-
+    
     public init() {}
-
-    public func createEmployee(_ employee: Employee) async throws -> Employee {
-        let dto = FirestoreMapper.employeeToDTO(employee)
-        let ref = collection.document(employee.id)
-        try ref.setData(from: dto)
-        let snap = try await ref.getDocument()
-        let savedDTO = try snap.data(as: EmployeeDTO.self)
-        return FirestoreMapper.employeeToDomain(savedDTO)
-    }
-
-    public func fetchEmployee(byId id: String) async throws -> Employee? {
-        let snap = try await collection.document(id).getDocument()
-        guard snap.exists, let dto = try? snap.data(as: EmployeeDTO.self) else {
-            return nil
+    
+    public func fetch(id: String) async throws -> Employee {
+        let document = try await db.collection(FirestoreCollection.employees).document(id).getDocument()
+        guard let dto = try? document.data(as: EmployeeDTO.self) else {
+            throw FirestoreError.notFound
         }
-        return FirestoreMapper.employeeToDomain(dto)
+        return dto.toDomain()
     }
-
-    public func fetchAllEmployees() async throws -> [Employee] {
-        let snap = try await collection.getDocuments()
-        return snap.documents.compactMap { try? $0.data(as: EmployeeDTO.self) }
-            .map { FirestoreMapper.employeeToDomain($0) }
+    
+    public func fetchAll() async throws -> [Employee] {
+        let snapshot = try await db.collection(FirestoreCollection.employees).getDocuments()
+        return snapshot.documents.compactMap { try? $0.data(as: EmployeeDTO.self).toDomain() }
     }
-
-    public func updateEmployee(_ employee: Employee) async throws {
-        let dto = FirestoreMapper.employeeToDTO(employee)
-        try collection.document(employee.id).setData(from: dto, merge: true)
-    }
-
-    public func deleteEmployee(byId id: String) async throws {
-        try await collection.document(id).delete()
-    }
-
-    public func searchEmployees(keyword: String) async throws -> [Employee] {
-        let snapshots =
-            try await collection
-            .whereField("nameKana", isGreaterThanOrEqualTo: keyword)
-            .whereField(
-                "nameKana",
-                isLessThanOrEqualTo: keyword + "\u{f8ff}"
-            )
+    
+    public func fetch(byEmail email: String) async throws -> Employee? {
+        let snapshot = try await db.collection(FirestoreCollection.employees)
+            .whereField("email", isEqualTo: email)
+            .limit(to: 1)
             .getDocuments()
-        return snapshots.documents.compactMap {
-            try? $0.data(as: EmployeeDTO.self)
-        }.map { FirestoreMapper.employeeToDomain($0) }
+        
+        return try snapshot.documents.first?.data(as: EmployeeDTO.self).toDomain()
+    }
+    
+    public func save(_ employee: Employee) async throws {
+        var dto = employee.toDTO()
+        // 设置 updatedAt 为 nil，利用 @ServerTimestamp 让服务端填入时间
+        dto.updatedAt = nil
+        try db.collection(FirestoreCollection.employees).document(employee.id).setData(from: dto)
+    }
+    
+    public func delete(id: String) async throws {
+        try await db.collection(FirestoreCollection.employees).document(id).delete()
     }
 }

@@ -9,12 +9,13 @@ import FirebaseFirestore
 import Foundation
 import ReceptionCore
 
-internal struct VisitorDTO: Codable {
+// MARK: - Visitor DTO
+struct VisitorDTO: Codable {
     @DocumentID var id: String?
     var name: String
     var company: String?
     var email: String?
     var phone: String?
-    @ServerTimestamp var createdAt: Timestamp?
-    @ServerTimestamp var updatedAt: Timestamp?
+    @ServerTimestamp var createdAt: Date?
+    @ServerTimestamp var updatedAt: Date?
 }
