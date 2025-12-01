@@ -12,9 +12,11 @@ import ReceptionCore
 // MARK: - Visit DTO
 struct RKVisitDTO: Codable {
     @DocumentID var id: String?
-    var type: RKVisitType // 假设 VisitType 也是 String, Codable
-    var visitorId: String
-    var employeeId: String
+    var type: RKVisitType
+    var visitorId: String?
+    var employeeId: String?
+    var vistorName: String?
+    var companyName: String?
     @ServerTimestamp var createdAt: Date?
     @ServerTimestamp var updatedAt: Date?
     var scheduledAt: Date?

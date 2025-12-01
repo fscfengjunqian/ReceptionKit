@@ -10,8 +10,10 @@ import Foundation
 public struct RKVisit: Identifiable, Codable, Equatable {
     public let id: String
     public var type: RKVisitType
-    public var visitorId: String
-    public var employeeId: String
+    public var visitorId: String?
+    public var employeeId: String?
+    public var visitorName: String?
+    public var companyName: String?
 
     public var createdAt: Date
     public var updatedAt: Date?
@@ -25,8 +27,10 @@ public struct RKVisit: Identifiable, Codable, Equatable {
     public init(
         id: String = UUID().uuidString,
         type: RKVisitType = .unscheduled,
-        visitorId: String,
-        employeeId: String,
+        visitorId: String? = nil,
+        employeeId: String? = nil,
+        visitorName: String? = nil,
+        companyName: String? = nil,
         createdAt: Date = .now,
         updatedAt: Date? = nil,
         scheduledAt: Date? = nil,
@@ -38,6 +42,8 @@ public struct RKVisit: Identifiable, Codable, Equatable {
         self.type = type
         self.visitorId = visitorId
         self.employeeId = employeeId
+        self.visitorName = visitorName
+        self.companyName = companyName
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.scheduledAt = scheduledAt
