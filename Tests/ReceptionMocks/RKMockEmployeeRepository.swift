@@ -10,6 +10,7 @@ import ReceptionCore
 
 public class RKMockEmployeeRepository: RKEmployeeRepositoryProtocol {
     
+    
     // 模拟数据库存储
     public var employees: [String: RKEmployee] = [:]
     // 用于模拟测试错误
@@ -41,6 +42,14 @@ public class RKMockEmployeeRepository: RKEmployeeRepositoryProtocol {
         try await Task.sleep(nanoseconds: 500_000_000)
         return Array(employees.values)
     }
+    
+    public func fetch(byNameKanaPrefix prefix: String) async throws -> [RKEmployee] {
+        if shouldThrowError {
+            throw RKMockError.fetchFailed
+        }
+        return employees.values.filter({ $0.nameKana?.prefix(2) ?? "ヤマ" == prefix })
+    }
+    
     
     public func fetch(byEmail email: String) async throws -> RKEmployee? {
         if shouldThrowError {

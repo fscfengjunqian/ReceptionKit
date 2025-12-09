@@ -46,9 +46,3 @@ public struct RKEmployee: Identifiable, Codable, Equatable {
         self.updatedAt = updatedAt
     }
 }
-
-public enum RKEmployeeRole: String, Codable {
-    case admin
-    case normal
-    case frontDesk
-}

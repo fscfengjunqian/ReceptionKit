@@ -12,12 +12,12 @@ import ReceptionCore
 // MARK: - Firestore Visitor Repository
 public class RKFirestoreVisitorRepository: RKVisitorRepositoryProtocol {
     
-    private let db = Firestore.firestore()
+    private let collection = Firestore.firestore().collection(RKFirestoreCollection.visitors)
     
     public init() {}
     
     public func fetch(id: String) async throws -> RKVisitor {
-        let document = try await db.collection(RKFirestoreCollection.visitors).document(id).getDocument()
+        let document = try await collection.document(id).getDocument()
         guard let dto = try? document.data(as: RKVisitorDTO.self) else {
             throw RKFirestoreError.notFound
         }
@@ -25,7 +25,7 @@ public class RKFirestoreVisitorRepository: RKVisitorRepositoryProtocol {
     }
     
     public func fetch(byEmail email: String) async throws -> RKVisitor? {
-        let snapshot = try await db.collection(RKFirestoreCollection.visitors)
+        let snapshot = try await collection
             .whereField("email", isEqualTo: email)
             .limit(to: 1)
             .getDocuments()
@@ -36,7 +36,7 @@ public class RKFirestoreVisitorRepository: RKVisitorRepositoryProtocol {
     public func search(name: String) async throws -> [RKVisitor] {
         // Firestore 的全文搜索能力有限。
         // 这里演示一个简单的前缀搜索技巧 (name >= query AND name <= query + \u{f8ff})
-        let snapshot = try await db.collection(RKFirestoreCollection.visitors)
+        let snapshot = try await collection
             .whereField("name", isGreaterThanOrEqualTo: name)
             .whereField("name", isLessThan: name + "\u{f8ff}")
             .getDocuments()
@@ -47,10 +47,10 @@ public class RKFirestoreVisitorRepository: RKVisitorRepositoryProtocol {
     public func save(_ visitor: RKVisitor) async throws {
         var dto = visitor.toDTO()
         dto.updatedAt = nil
-        try db.collection(RKFirestoreCollection.visitors).document(visitor.id).setData(from: dto)
+        try collection.document(visitor.id).setData(from: dto)
     }
     
     public func delete(id: String) async throws {
-        try await db.collection(RKFirestoreCollection.visitors).document(id).delete()
+        try await collection.document(id).delete()
     }
 }
