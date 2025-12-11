@@ -10,12 +10,12 @@ import FirebaseFirestore
 import ReceptionCore
 
 // MARK: - Visit DTO
-struct RKVisitDTO: Codable {
+public struct RKVisitDTO: Codable {
     @DocumentID var id: String?
     var type: RKVisitType
     var visitorId: String?
     var employeeId: String?
-    var vistorName: String?
+    var visitorName: String?
     var companyName: String?
     @ServerTimestamp var createdAt: Date?
     @ServerTimestamp var updatedAt: Date?

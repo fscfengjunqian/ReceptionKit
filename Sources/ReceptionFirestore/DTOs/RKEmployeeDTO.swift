@@ -10,7 +10,7 @@ import FirebaseFirestore
 import ReceptionCore
 
 // MARK: - Employee DTO
-struct RKEmployeeDTO: Codable {
+public struct RKEmployeeDTO: Codable {
     @DocumentID var id: String? // Firestore 自动映射文档 ID
     var email: String
     var name: String

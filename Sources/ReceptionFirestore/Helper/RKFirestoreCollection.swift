@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum RKFirestoreCollection {
-    static let employees = "users"
-    static let visits = "visit"
-    static let visitors = "visitor"
+public enum RKFirestoreCollection {
+    public static let employees = "users"
+    public static let visits = "visit"
+    public static let visitors = "visitor"
 }
